@@ -95,7 +95,7 @@ def write_macro_func( myfile, coeffs, index, mat_name ):
     '''
     nonzero_coeffs = [coeff for coeff in coeffs if is_nonzero(coeff)]
     nnz = len( nonzero_coeffs )
-    add = 'inline void bl_macro_kernel_stra_abc%d( int m, int n, int k, double *packA, double *packB, ' % ( index )
+    add = 'static inline void bl_macro_kernel_stra_abc%d( int m, int n, int k, double *packA, double *packB, ' % ( index )
     add += ', '.join(['double *%s%d' % ( mat_name, i ) for i in range(nnz)])
     add += ', int ld%s ) {' % (mat_name)
     write_line(myfile, 0, add)
@@ -176,7 +176,7 @@ def write_packm_func( myfile, coeffs, index, mat_name ):
     '''
     nonzero_coeffs = [coeff for coeff in coeffs if is_nonzero(coeff)]
     nnz = len( nonzero_coeffs )
-    add = 'inline void pack%s_add_stra_abc%d( int m, int n, ' % (mat_name, index)
+    add = 'static inline void pack%s_add_stra_abc%d( int m, int n, ' % (mat_name, index)
     add += ', '.join(['double *%s%d' % ( mat_name, i ) for i in range(nnz)])
     add += ', int ld%s, double *pack%s ' % (mat_name, mat_name)
     add += ') {'
@@ -426,6 +426,7 @@ def gen_abc_fmm( coeff_filename_mix, dims_mix, level_mix, outfilename, micro_ker
     with open( outfilename, 'w' ) as myfile:
         write_line( myfile, 0, '#include "%s"' % kernel_header_filename[10:] )
         write_line( myfile, 0, '#include "bl_dgemm.h"' )
+        write_line( myfile, 0, '#include <time.h>' )
         write_break( myfile )
 
         cur_coeffs = generateCoeffs( coeffs_mix )

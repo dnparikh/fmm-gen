@@ -401,6 +401,7 @@ def gen_naive_fmm( coeff_filename_mix, dims_mix, level_mix, outfile ):
 
     with open(outfile, 'w') as myfile:
         write_line( myfile, 0, '#include "bl_dgemm.h"' )
+        write_line( myfile, 0, '#include <time.h>' )
         write_break( myfile )
 
         cur_coeffs = generateCoeffs( coeffs_mix )

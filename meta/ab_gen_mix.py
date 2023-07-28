@@ -58,7 +58,7 @@ def create_packm_functions(myfile, coeffs):
 
 
 def create_macro_functions( myfile, coeffs ):
-    add = 'inline void bl_macro_kernel_stra_ab( int m, int n, int k, double *packA, double *packB, double *C, int ldC ) {' 
+    add = 'static inline void bl_macro_kernel_stra_ab( int m, int n, int k, double *packA, double *packB, double *C, int ldC ) {' 
     write_line(myfile, 0, add)
 
     write_line( myfile, 1, 'int i, j;' )
@@ -90,7 +90,7 @@ def write_packm_func( myfile, coeffs, index, mat_name ):
     '''
     nonzero_coeffs = [coeff for coeff in coeffs if is_nonzero(coeff)]
     nnz = len( nonzero_coeffs )
-    add = 'inline void pack%s_add_stra_ab%d( int m, int n, ' % (mat_name, index)
+    add = 'static inline void pack%s_add_stra_ab%d( int m, int n, ' % (mat_name, index)
     add += ', '.join(['double *%s%d' % ( mat_name, i ) for i in range(nnz)])
     add += ', int ld%s, double *pack%s ' % (mat_name, mat_name)
     add += ') {'
@@ -399,6 +399,7 @@ def gen_ab_fmm( coeff_filename_mix, dims_mix, level_mix, outfilename ):
     coeffs_mix = []
     idx = 0
     for coeff_file in coeff_filename_mix:
+        print coeff_file
         coeffs = read_coeffs( coeff_file )
         level = level_mix[idx]
         for level_id in range( level ):
@@ -418,6 +419,7 @@ def gen_ab_fmm( coeff_filename_mix, dims_mix, level_mix, outfilename ):
     with open( outfilename, 'w' ) as myfile:
         write_line( myfile, 0, '#include "bl_dgemm_kernel.h"' )
         write_line( myfile, 0, '#include "bl_dgemm.h"' )
+        write_line( myfile, 0, '#include <time.h>' )
         write_break( myfile )
 
         cur_coeffs = generateCoeffs( coeffs_mix )

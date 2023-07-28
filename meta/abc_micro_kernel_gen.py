@@ -90,8 +90,8 @@ def write_header_end( myfile ):
 def generate_kernel_header( myfile, nonzero_coeffs, index ):
     nnz = len( nonzero_coeffs )
     #write_line( myfile, 1, 'a' )
-    add = 'inline void bl_dgemm_micro_kernel_stra_abc%d( int k, double *a, double *b, ' % index
-    add += 'unsigned long long ldc, '
+    add = 'extern void bl_dgemm_micro_kernel_stra_abc%d( int k, double *a, double *b, ' % index
+    add += 'unsigned long long int ldc, '
     add += ', '.join( ['double *c%d' % ( i ) for i in range( nnz )] )
     if ( contain_nontrivial( nonzero_coeffs ) ):
         add += ', double *alpha_list'
@@ -1103,9 +1103,13 @@ def write_common_end_assembly( myfile, nnz, index, has_nontrivial=False ):
     write_line( myfile, 1, '  "m" (ldc),         // 5' )
 
     add = ''
-    add += '\n    '.join( [ '  "m" (c%d)         // %d' % ( i, i+6 ) for i in range( nnz ) ] )
-    if has_nontrivial: 
+    add += '\n    '.join( [ '  "m" (c%d),         // %d' % ( i, i+6 ) for i in range( nnz - 1) ] )
+    if has_nontrivial:
+        add += '\n      "m" (c' + str((nnz-1)) + ')         // ' + str((nnz-1)+6)
         add += '\n      "m" (alpha_list)        // %d' % (nnz + 6) 
+    else:
+        add += '\n      "m" (c' + str((nnz-1)) + ')         // ' + str((nnz-1)+6)
+
     #write_line( myfile, 1, '  "m" (c)            // 6' )
     write_line( myfile, 1, add )
 
@@ -1123,7 +1127,7 @@ def write_common_end_assembly( myfile, nnz, index, has_nontrivial=False ):
 def generate_micro_kernel( myfile, nonzero_coeffs, index ):
     nnz = len( nonzero_coeffs )
     #write_line( myfile, 1, 'a' )
-    add = 'inline void bl_dgemm_micro_kernel_stra_abc%d( int k, double *a, double *b, unsigned long long ldc, ' % index
+    add = 'inline void bl_dgemm_micro_kernel_stra_abc%d( int k, double *a, double *b, unsigned long long int ldc, ' % index
     add += ', '.join( ['double *c%d' % ( i ) for i in range( nnz )] )
     if ( contain_nontrivial( nonzero_coeffs ) ):
         add += ', double *alpha_list'

@@ -149,6 +149,7 @@ def gen_testfile( file_name, pack_type ):
     myfile.write( \
 '''\
 #include "bl_dgemm.h"
+#include <time.h>
 
 void test_bl_dgemm( int m, int n, int k )
 {{

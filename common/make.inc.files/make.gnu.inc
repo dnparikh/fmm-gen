@@ -1,9 +1,9 @@
-CC = gcc
+CC = gcc-12
 CXX = g++
 
-ARCH = ar
+ARCH = gcc-ar-12
 ARCHFLAGS = cr
-RANLIB = ranlib
+RANLIB = gcc-ranlib-12
 
 ifeq ($(BLISLAB_USE_BLAS),true)
 CFLAGS = -$(COMPILER_OPT_LEVEL) -fopenmp -mavx -fPIC -DUSE_BLAS

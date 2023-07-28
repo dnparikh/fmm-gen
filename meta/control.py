@@ -39,18 +39,19 @@ from misc_gen import gen_test_makefile, gen_project_makefile, gen_testfile
 from alg_dic import alg_dic
 
 # Get the executable file by alg, level, and pack_type
-def generateCode( alg_dims_mix, level_mix, pack_type, path_prefix='../' ):
-    if path_prefix[-1] != '/':
-        path_prefix += '/'
+def generateCode( alg_dims_mix, level_mix, pack_type, dest_path ):
+
+    path_prefix = '../'
 
     #jobname = alg + '_' + str(level) + '_' + pack_type
     jobname = '_'.join( [ alg_dims_mix[i]+'-'+str(level_mix[i]) for i in range(len(alg_dims_mix)) ] ) + '_' + pack_type
 
-    gen_dirname = path_prefix + jobname
+    gen_dirname = dest_path + '/' + jobname
 
     if not os.path.exists(gen_dirname):
         os.makedirs(gen_dirname)
-
+    
+    curr_dir = os.getcwd()
     os.system( 'cp -r {0}common/* {1}'.format( path_prefix, gen_dirname ) )
     os.chdir( gen_dirname )
     #os.system( 'make clean' )
@@ -72,6 +73,8 @@ def generateCode( alg_dims_mix, level_mix, pack_type, path_prefix='../' ):
     coeff_file_list = [ alg_dic[ alg ][0] for alg in alg_dims_mix ]
     dims_list = [ alg_dic[ alg ][1] for alg in alg_dims_mix ]
     level_list = level_mix
+    
+    coeff_file_list = [curr_dir + '/' + x for x in coeff_file_list] 
 
     # Generate the code
     if ( pack_type == 'abc' ):
